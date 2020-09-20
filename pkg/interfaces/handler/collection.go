@@ -47,29 +47,26 @@ func (ch *collectionHandler) HandleList() http.HandlerFunc {
 		}
 
 		// アイテム一覧とその所有情報を取得するユースケースを呼び出し
-		collectionItems, hasCollectionItem, err := ch.collectionUsecase.GetCollection(user.ID)
+		collectionItems, err := ch.collectionUsecase.GetCollection(user.ID)
 		if err != nil {
 			log.Println(err)
 			response.InternalServerError(writer, "Internal Server Error")
 			return
 		}
 
-		// レスポンスのhasItemを作成
-		collectionList := make([]collectionListItem, len(collectionItems))
-		for i, collectionItem := range collectionItems {
-			_, ok := hasCollectionItem[collectionItem.ID]
-			hasItem := ok
-
-			collectionList[i] = collectionListItem{
-				CollectionID: collectionItem.ID,
-				Name:         collectionItem.Name,
-				HasItem:      hasItem,
+		collectionResult := make([]collectionListItem, len(collectionItems))
+		for i, collectionItems := range collectionItems {
+			collectionResult[i] = collectionListItem{
+				CollectionID: collectionItems.ID,
+				Name:         collectionItems.Name,
+				Rarity:       collectionItems.Rarity,
+				HasItem:      collectionItems.HasItem,
 			}
 		}
 
 		// レスポンスに必要な情報を詰めて返却
 		response.Success(writer, &collectionListResponse{
-			Collections: collectionList,
+			Collections: collectionResult,
 		})
 	}
 }

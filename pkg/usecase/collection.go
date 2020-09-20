@@ -1,17 +1,23 @@
 package usecase
 
 import (
-	"20dojo-online/pkg/domain/model"
 	"20dojo-online/pkg/domain/repository"
 )
 
 type CollectionUsecase interface {
-	GetCollection(userID string) (model.CollectionItems, map[string]struct{}, error)
+	GetCollection(userID string) ([]*collectionResult, error)
 }
 
 type collectionUsecase struct {
 	collectionItemRepo     repository.CollectionItemRepo
 	userCollectionItemRepo repository.UserCollectionItemRepo
+}
+
+type collectionResult struct {
+	ID      string
+	Name    string
+	Rarity  int32
+	HasItem bool
 }
 
 // NewCollectionUsecase CollectionUsecaseを生成
@@ -23,15 +29,15 @@ func NewCollectionUsecase(cr repository.CollectionItemRepo, ucr repository.UserC
 }
 
 // GetCollection userIDを条件に全てのアイテムとその所持情報を取得
-func (cu collectionUsecase) GetCollection(userID string) (model.CollectionItems, map[string]struct{}, error) {
+func (cu collectionUsecase) GetCollection(userID string) ([]*collectionResult, error) {
 	collectionItems, err := cu.collectionItemRepo.SelectAll()
 	if err != nil {
-		return nil, nil, err
+		return nil, err
 	}
 
 	userCollectionItems, err := cu.userCollectionItemRepo.SelectByUserID(userID)
 	if err != nil {
-		return nil, nil, err
+		return nil, err
 	}
 
 	hasCollectionItem := make(map[string]struct{}, len(userCollectionItems))
@@ -40,5 +46,19 @@ func (cu collectionUsecase) GetCollection(userID string) (model.CollectionItems,
 		hasCollectionItem[id] = struct{}{}
 	}
 
-	return collectionItems, hasCollectionItem, nil
+	// レスポンスのhasItemを作成
+	collectionList := make([]*collectionResult, len(collectionItems))
+	for i, collectionItem := range collectionItems {
+		_, ok := hasCollectionItem[collectionItem.ID]
+		hasItem := ok
+
+		collectionList[i] = &collectionResult{
+			ID:      collectionItem.ID,
+			Name:    collectionItem.Name,
+			Rarity:  3,
+			HasItem: hasItem,
+		}
+	}
+
+	return collectionList, nil
 }

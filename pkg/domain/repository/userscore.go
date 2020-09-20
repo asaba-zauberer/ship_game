@@ -10,5 +10,5 @@ type UserScoreRepo interface {
 	GetScoresByID(id string) (model.UserScores, error)
 	InsertScore(id string, stage, score int32) error
 	UpdateScore(id string, stage, score int32) error
-	GetRankingByStage(stage int32) (model.UserScores, error)
+	GetRankingByStage(stage int) (model.UserScores, error)
 }

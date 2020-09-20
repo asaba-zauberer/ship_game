@@ -13,6 +13,7 @@ import (
 type UserRepo interface {
 	Create(id, authToken, name string, coin, stage int32) error
 	SelectByAuthToken(authToken string) (*model.User, error)
+	SelectByID(id []string) (model.Users, error)
 	Update(record *model.User, name string, coin, stage int32) error
 	Lock(user *model.User) error
 }
@@ -41,6 +42,35 @@ func (ur *userRepo) Create(id, authToken, name string, coin, stage int32) error 
 func (ur *userRepo) SelectByAuthToken(authToken string) (*model.User, error) {
 	row := ur.SqlHandler.Conn.QueryRow("SELECT * FROM user WHERE auth_token = ?", authToken)
 	return convertToUser(row)
+}
+
+// SelectByAuthToken auth_tokenを条件にレコードを取得
+func (ur *userRepo) SelectByID(id []string) (model.Users, error) {
+	query, queryParam := createSelectByIDListQuery(id)
+	rows, err := ur.SqlHandler.Conn.Query(query, queryParam...)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	return convertToUsers(rows)
+}
+
+func createSelectByIDListQuery(ids []string) (string, []interface{}) {
+	query := "SELECT * FROM user WHERE id IN("
+	var queryParam []interface{}
+
+	for n, id := range ids {
+		query += "?"
+		if n+1 != len(ids) {
+			query += ","
+		} else {
+			query += ")"
+		}
+		queryParam = append(queryParam, id)
+
+	}
+	return query, queryParam
 }
 
 // Update ユーザー情報の更新

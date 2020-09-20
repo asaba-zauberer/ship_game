@@ -8,6 +8,7 @@ import (
 type UserRepo interface {
 	Create(id, authToken, name string, coin, stage int32) error
 	SelectByAuthToken(authToken string) (*model.User, error)
+	SelectByID(id []string) (model.Users, error)
 	Update(record *model.User, name string, coin, stage int32) error
 	Lock(*model.User) error
 }

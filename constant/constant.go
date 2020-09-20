@@ -4,7 +4,7 @@ const (
 	// ガチャ1回あたりのコイン消費量
 	GachaCoinConsumption = 100
 	// ランキングの取得人数
-	RankingGetNumber = 5
+	RankingGetNumber = 1
 	// 初期スコア
 	InitialHighScore = 0
 	// 初期コイン

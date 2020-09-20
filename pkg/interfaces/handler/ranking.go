@@ -27,50 +27,50 @@ func NewRankingHandler(ru usecase.RankingUsecase) RankingHandler {
 func (rh *rankingHandler) HandleList() http.HandlerFunc {
 	return func(writer http.ResponseWriter, request *http.Request) {
 		// URLクエリパラメータを取得
-		start, err := strconv.Atoi(request.URL.Query().Get("start"))
+		stage, err := strconv.Atoi(request.URL.Query().Get("stage"))
 		if err != nil {
 			log.Println(err)
-			response.BadRequest(writer, "query 'start' is empty")
+			response.BadRequest(writer, "query 'stage' is empty")
 			return
 		}
-		if start < 1 || start > constant.NumberOfStage {
-			log.Printf("query 'start' is invalid. start=%d", start)
-			response.BadRequest(writer, "query 'start' is invalid")
+		if stage < 1 || stage > constant.NumberOfStage {
+			log.Printf("query 'stage' is invalid. start=%d", stage)
+			response.BadRequest(writer, "query 'stage' is invalid")
 			return
 		}
 
 		// ユーザー情報の取得を行うユースケースを呼び出し
-		users, err := rh.rankingUsecase.GetRanking(start)
+		rankingUserList, err := rh.rankingUsecase.GetRanking(stage)
 		if err != nil {
 			log.Println(err)
 			response.InternalServerError(writer, "Internal Server Error")
 			return
 		}
 
-		rankingList := make([]RankingListItem, len(users))
-		/*
-			for i, user := range users {
-				rankingList[i] = RankingListItem{
-					UserID:   user.ID,
-					UserName: user.Name,
-					Rank:     int32(start + i),
-					Score:    user.HighScore,
-				}
+		// JSONに整形
+		rankingResult := make([]rankingListItem, len(rankingUserList))
+		for i, rankUserData := range rankingUserList {
+			rankingResult[i] = rankingListItem{
+				UserID:   rankUserData.UserID,
+				UserName: rankUserData.UserName,
+				Rank:     int32(i) + 1,
+				Score:    rankUserData.Score,
 			}
-		*/
-		response.Success(writer, &RankingListResponse{
-			Ranks: rankingList,
+		}
+
+		response.Success(writer, &rankingListResponse{
+			Ranks: rankingResult,
 		})
 	}
 }
 
-type RankingListItem struct {
+type rankingListItem struct {
 	UserID   string `json:"userId"`
 	UserName string `json:"userName"`
 	Rank     int32  `json:"rank"`
 	Score    int32  `json:"score"`
 }
 
-type RankingListResponse struct {
-	Ranks []RankingListItem `json:"ranks"`
+type rankingListResponse struct {
+	Ranks []rankingListItem `json:"ranks"`
 }

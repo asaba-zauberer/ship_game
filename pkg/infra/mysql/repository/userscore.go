@@ -14,7 +14,7 @@ type UserScoreRepo interface {
 	GetScoresByID(id string) (model.UserScores, error)
 	InsertScore(id string, stage, score int32) error
 	UpdateScore(id string, stage, score int32) error
-	GetRankingByStage(stage int32) (model.UserScores, error)
+	GetRankingByStage(stage int) (model.UserScores, error)
 }
 
 type userScoreRepo struct {
@@ -63,8 +63,8 @@ func (usr *userScoreRepo) UpdateScore(userID string, stage, score int32) error {
 }
 
 // GetRankingByStage 指定ステージのランキングを取得
-func (usr *userScoreRepo) GetRankingByStage(stage int32) (model.UserScores, error) {
-	rows, err := usr.SqlHandler.Conn.Query("SELECT id FROM user_score WHERE stage = ? ORDER BY score")
+func (usr *userScoreRepo) GetRankingByStage(stage int) (model.UserScores, error) {
+	rows, err := usr.SqlHandler.Conn.Query("SELECT * FROM user_score WHERE stage = ? ORDER BY score DESC", stage)
 	if err != nil {
 		return nil, err
 	}
@@ -87,6 +87,7 @@ func convertToUserScore(row *sql.Row) (*model.UserScore, error) {
 // convertToUserScores rowsデータをUserScoresデータへ変換する
 func convertToUserScores(rows *sql.Rows) (model.UserScores, error) {
 	var userScores model.UserScores
+
 	for rows.Next() {
 		userScore := model.UserScore{}
 		if err := rows.Scan(&userScore.ID, &userScore.Stage, &userScore.Score); err != nil {
@@ -95,6 +96,5 @@ func convertToUserScores(rows *sql.Rows) (model.UserScores, error) {
 		}
 		userScores = append(userScores, &userScore)
 	}
-
 	return userScores, nil
 }

@@ -45,7 +45,7 @@ func InjectGameHandler() handler.GameHandler {
 
 // -----Rankingの依存解決-----
 func InjectRankingUsecase() usecase.RankingUsecase {
-	return usecase.NewRankingUsecase(InjectUserRepo())
+	return usecase.NewRankingUsecase(InjectUserRepo(), InjectUserScoreRepo())
 }
 
 func InjectRankingHandler() handler.RankingHandler {

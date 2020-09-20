@@ -1,32 +1,68 @@
 package usecase
 
 import (
-	"20dojo-online/pkg/domain/model"
 	"20dojo-online/pkg/domain/repository"
 )
 
 type RankingUsecase interface {
-	GetRanking(start int) (model.Users, error)
+	GetRanking(stage int) ([]*rankingResponse, error)
 }
 
 type rankingUsecase struct {
-	userRepo repository.UserRepo
+	userRepo      repository.UserRepo
+	userScoreRepo repository.UserScoreRepo
+}
+
+type rankingResponse struct {
+	UserID   string
+	UserName string
+	Rank     int32
+	Score    int32
 }
 
 // NewRankingUsecase RankingUsecaseを生成
-func NewRankingUsecase(ur repository.UserRepo) RankingUsecase {
-	return &rankingUsecase{userRepo: ur}
+func NewRankingUsecase(ur repository.UserRepo, usr repository.UserScoreRepo) RankingUsecase {
+	return &rankingUsecase{
+		userRepo:      ur,
+		userScoreRepo: usr,
+	}
 }
 
 // GetRanking ランキング表示のユースケース
-// TODO リニューアル
-func (ru rankingUsecase) GetRanking(start int) (model.Users, error) {
-	//users, err := ru.userRepo.SelectByHighScore(start)
-	/*
-		if err != nil {
-			return nil, err
+func (ru rankingUsecase) GetRanking(stage int) ([]*rankingResponse, error) {
+	// ステージを条件にランキングを取得
+	userScores, err := ru.userScoreRepo.GetRankingByStage(stage)
+	if err != nil {
+		return nil, err
+	}
+
+	// ユーザー情報を取得
+	userIDList := make([]string, len(userScores))
+	for i, score := range userScores {
+		userIDList[i] = score.ID
+	}
+
+	users, err := ru.userRepo.SelectByID(userIDList)
+	if err != nil {
+		return nil, err
+	}
+
+	// マップに変換
+	usersMap := make(map[string]string)
+	for _, data := range users {
+		usersMap[data.ID] = data.Name
+	}
+
+	// 戻り値の作成
+	rankingList := make([]*rankingResponse, len(userScores))
+	for i, scoreData := range userScores {
+		rankingList[i] = &rankingResponse{
+			UserID:   scoreData.ID,
+			UserName: usersMap[scoreData.ID],
+			Rank:     int32(i) + 1,
+			Score:    scoreData.Score,
 		}
-		return users, nil
-	*/
-	return nil, nil
+	}
+
+	return rankingList, nil
 }

@@ -62,13 +62,13 @@ func (uh *userHandler) HandleGet() http.HandlerFunc {
 
 		type highScore struct {
 			Stage     int32 `json:"stage"`
-			HighScore int32 `json:"high_score"`
+			HighScore int32 `json:"highScore"`
 		}
 
 		type getResponse struct {
 			ID         string      `json:"id"`
 			Name       string      `json:"name"`
-			HighScores []highScore `json:"high_scores"`
+			HighScores []highScore `json:"highScores"`
 			Coin       int32       `json:"coin"`
 			Stage      int32       `json:"stage"`
 		}

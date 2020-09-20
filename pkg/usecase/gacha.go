@@ -62,33 +62,31 @@ func (gu gachaUsecase) DrawGacha(user *model.User, times int32) ([]*gachaResultL
 			log.Println(err)
 			return err
 		}
-		log.Println("1")
+
 		// 抽選処理
 		gachaResult, err := lottery(gachaProb, times)
 		if err != nil {
 			return err
 		}
-		log.Println("2")
-		log.Println(gachaResult)
+
 		// 入手アイテムの情報を取得
 		gotItemsData, err := gu.collectionItemRepo.SelectByID(gachaResult)
 		if err != nil {
 			return err
 		}
-		log.Println("3")
-		log.Println(gotItemsData)
+
 		// ユーザーのアイテム所持情報を取得
 		userCollectionItems, err := gu.userCollectionItemRepo.SelectByUserID(user.ID)
 		if err != nil {
 			return err
 		}
-		log.Println("4")
+
 		// mapに変換
 		userCollectionItemsMap := make(map[string]string)
 		for _, data := range userCollectionItems {
 			userCollectionItemsMap[data.CollectionItemID] = data.UserID
 		}
-		log.Println("5")
+
 		// DrawGachaの返却値gachaResultsと保存するガチャ結果userGotItemsを作成
 		userGotItems := make(model.UserCollectionItems, times)
 		for i, gotItemData := range gotItemsData {
@@ -104,12 +102,12 @@ func (gu gachaUsecase) DrawGacha(user *model.User, times int32) ([]*gachaResultL
 				CollectionItemID: gotItemData.ID,
 			}
 		}
-		log.Println("6")
+
 		// 入手アイテムの保存
 		if err := gu.userCollectionItemRepo.InsertItems(userGotItems); err != nil {
 			return err
 		}
-		log.Println("7")
+
 		// コインの減算処理
 		if err := gu.userRepo.Update(user, user.Name, user.Coin-times*constant.GachaCoinConsumption, user.Stage); err != nil {
 			return err

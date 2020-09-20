@@ -76,6 +76,9 @@ func (gh gachaHandler) HandleDraw() http.HandlerFunc {
 			}
 		}
 
-		response.Success(writer, gachaResult)
+		//response.Success(writer, gachaResult)
+		response.Success(writer, &resultResponse{
+			Results: gachaResult,
+		})
 	}
 }

@@ -42,13 +42,14 @@ CREATE TABLE IF NOT EXISTS `ca_hack`.`user_score` (
   `id` VARCHAR(128) NOT NULL COMMENT 'ユーザID',
   `stage` INT UNSIGNED NOT NULL COMMENT 'ステージ',
   `score` INT UNSIGNED NOT NULL COMMENT 'スコア',
-  PRIMARY KEY (`id`),
+  PRIMARY KEY (`id`, `stage`),
   INDEX `idx_score` (`score` ASC),
   CONSTRAINT `fk_id_user`
     FOREIGN KEY (`id`)
     REFERENCES `ca_hack`.`user` (`id`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION)
+
 ENGINE = InnoDB
 COMMENT = 'ハイスコア';
 

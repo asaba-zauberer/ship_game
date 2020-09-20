@@ -68,7 +68,7 @@ func (rh *rankingHandler) HandleList() http.HandlerFunc {
 			rankingResult[i] = rankingListItem{
 				UserID:   rankUserData.UserID,
 				UserName: rankUserData.UserName,
-				Rank:     int32(i) + 1,
+				Rank:     rankUserData.Rank,
 				Score:    rankUserData.Score,
 			}
 		}

@@ -55,11 +55,17 @@ func (ru rankingUsecase) GetRanking(stage int32) ([]*rankingResponse, error) {
 
 	// 戻り値の作成
 	rankingList := make([]*rankingResponse, len(userScores))
+	var previousScore int32
+	var rank int32
 	for i, scoreData := range userScores {
+		if scoreData.Score != previousScore {
+			rank = int32(i + 1)
+			previousScore = scoreData.Score
+		}
 		rankingList[i] = &rankingResponse{
 			UserID:   scoreData.ID,
 			UserName: usersMap[scoreData.ID],
-			Rank:     int32(i) + 1,
+			Rank:     rank,
 			Score:    scoreData.Score,
 		}
 	}

@@ -31,6 +31,7 @@ COMMENT = 'ユーザ';
 CREATE TABLE IF NOT EXISTS `ca_hack`.`collection_item` (
   `id` VARCHAR(128) NOT NULL COMMENT 'コレクションID',
   `name` VARCHAR(64) NOT NULL COMMENT 'コレクション名',
+  `rarity` INT NOT NULL COMMENT 'レアリティ',
   PRIMARY KEY (`id`))
 ENGINE = InnoDB
 COMMENT = 'コレクションアイテム';

@@ -4,6 +4,7 @@ import (
 	"database/sql"
 	"log"
 
+	"20dojo-online/constant"
 	"20dojo-online/pkg/domain/model"
 	"20dojo-online/pkg/domain/repository"
 	"20dojo-online/pkg/infra/mysql"
@@ -64,7 +65,7 @@ func (usr *userScoreRepo) UpdateScore(userID string, stage, score int32) error {
 
 // GetRankingByStage 指定ステージのランキングを取得
 func (usr *userScoreRepo) GetRankingByStage(stage int32) (model.UserScores, error) {
-	rows, err := usr.SqlHandler.Conn.Query("SELECT * FROM user_score WHERE stage = ? ORDER BY score DESC", stage)
+	rows, err := usr.SqlHandler.Conn.Query("SELECT * FROM user_score WHERE stage = ? ORDER BY score DESC LIMIT ?", stage, constant.RankingGetNumber)
 	if err != nil {
 		return nil, err
 	}

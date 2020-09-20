@@ -10,7 +10,6 @@ import (
 	"fmt"
 	"log"
 	"math/rand"
-	"strconv"
 )
 
 type GachaUsecase interface {
@@ -47,7 +46,7 @@ func (gu gachaUsecase) DrawGacha(user *model.User, times int32) ([]*gachaResultL
 
 	// ガチャ抽選に関するトランザクション
 	err := mysql.Transaction(mysql.OriginalSqlHandler.Conn, func(tx *sql.Tx) error {
-		// 他のトランザクションからのユー	ザー情報更新のロック
+		// 他のトランザクションからのユーザー情報更新のロック
 		if err := gu.userRepo.Lock(user); err != nil {
 			return err
 		}
@@ -92,13 +91,11 @@ func (gu gachaUsecase) DrawGacha(user *model.User, times int32) ([]*gachaResultL
 		userGotItems := make(model.UserCollectionItems, times)
 		for i, gotItemData := range gotItemsData {
 			_, ok := userCollectionItemsMap[gotItemData.ID]
-			rarity, _ := strconv.Atoi(gotItemData.ID)
-			rarity = rarity / 1000
 
 			gachaResults[i] = &gachaResultList{
 				ID:     gotItemData.ID,
 				Name:   gotItemData.Name,
-				Rarity: int32(rarity),
+				Rarity: gotItemData.Rarity,
 				IsNew:  !ok,
 			}
 			userGotItems[i] = &model.UserCollectionItem{

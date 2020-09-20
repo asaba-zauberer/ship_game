@@ -2,7 +2,6 @@ package usecase
 
 import (
 	"20dojo-online/pkg/domain/repository"
-	"strconv"
 )
 
 type CollectionUsecase interface {
@@ -50,15 +49,13 @@ func (cu collectionUsecase) GetCollection(userID string) ([]*collectionResult, e
 	// レスポンスのhasItemを作成
 	collectionList := make([]*collectionResult, len(collectionItems))
 	for i, collectionItem := range collectionItems {
-		rarity, _ := strconv.Atoi(collectionItem.ID)
-		rarity = rarity / 1000
 		_, ok := hasCollectionItem[collectionItem.ID]
 		hasItem := ok
 
 		collectionList[i] = &collectionResult{
 			ID:      collectionItem.ID,
 			Name:    collectionItem.Name,
-			Rarity:  int32(rarity),
+			Rarity:  collectionItem.Rarity,
 			HasItem: hasItem,
 		}
 	}

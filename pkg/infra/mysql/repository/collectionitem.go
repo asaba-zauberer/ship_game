@@ -69,7 +69,7 @@ func convertToCollectionItems(rows *sql.Rows) (model.CollectionItems, error) {
 
 	for rows.Next() {
 		collectionItem := model.CollectionItem{}
-		if err := rows.Scan(&collectionItem.ID, &collectionItem.Name); err != nil {
+		if err := rows.Scan(&collectionItem.ID, &collectionItem.Name, &collectionItem.Rarity); err != nil {
 			log.Println(err)
 			return nil, err
 		}

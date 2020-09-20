@@ -14,7 +14,7 @@ type UserScoreRepo interface {
 	GetScoresByID(id string) (model.UserScores, error)
 	InsertScore(id string, stage, score int32) error
 	UpdateScore(id string, stage, score int32) error
-	GetRankingByStage(stage int) (model.UserScores, error)
+	GetRankingByStage(stage int32) (model.UserScores, error)
 }
 
 type userScoreRepo struct {
@@ -63,7 +63,7 @@ func (usr *userScoreRepo) UpdateScore(userID string, stage, score int32) error {
 }
 
 // GetRankingByStage 指定ステージのランキングを取得
-func (usr *userScoreRepo) GetRankingByStage(stage int) (model.UserScores, error) {
+func (usr *userScoreRepo) GetRankingByStage(stage int32) (model.UserScores, error) {
 	rows, err := usr.SqlHandler.Conn.Query("SELECT * FROM user_score WHERE stage = ? ORDER BY score DESC", stage)
 	if err != nil {
 		return nil, err

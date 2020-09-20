@@ -5,7 +5,7 @@ import (
 )
 
 type RankingUsecase interface {
-	GetRanking(stage int) ([]*rankingResponse, error)
+	GetRanking(stage int32) ([]*rankingResponse, error)
 }
 
 type rankingUsecase struct {
@@ -29,7 +29,7 @@ func NewRankingUsecase(ur repository.UserRepo, usr repository.UserScoreRepo) Ran
 }
 
 // GetRanking ランキング表示のユースケース
-func (ru rankingUsecase) GetRanking(stage int) ([]*rankingResponse, error) {
+func (ru rankingUsecase) GetRanking(stage int32) ([]*rankingResponse, error) {
 	// ステージを条件にランキングを取得
 	userScores, err := ru.userScoreRepo.GetRankingByStage(stage)
 	if err != nil {

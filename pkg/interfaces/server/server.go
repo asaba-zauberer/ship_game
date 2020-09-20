@@ -30,7 +30,7 @@ func Serve(addr string) {
 
 	http.HandleFunc("/game/finish", post(middleware.Authenticate(gameHandler.HandleFinish())))
 
-	http.HandleFunc("/ranking/list", get(rankingHandler.HandleList()))
+	http.HandleFunc("/ranking/list", post(middleware.Authenticate(rankingHandler.HandleList())))
 
 	http.HandleFunc("/collection/list", get(middleware.Authenticate(collectionHandler.HandleList())))
 

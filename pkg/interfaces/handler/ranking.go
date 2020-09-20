@@ -1,11 +1,12 @@
 package handler
 
 import (
+	"encoding/json"
 	"log"
 	"net/http"
-	"strconv"
 
 	"20dojo-online/constant"
+	"20dojo-online/pkg/interfaces/dcontext"
 	"20dojo-online/pkg/interfaces/response"
 	"20dojo-online/pkg/usecase"
 )
@@ -26,21 +27,35 @@ func NewRankingHandler(ru usecase.RankingUsecase) RankingHandler {
 // HandleList ランキング取得処理
 func (rh *rankingHandler) HandleList() http.HandlerFunc {
 	return func(writer http.ResponseWriter, request *http.Request) {
-		// URLクエリパラメータを取得
-		stage, err := strconv.Atoi(request.URL.Query().Get("stage"))
-		if err != nil {
-			log.Println(err)
-			response.BadRequest(writer, "query 'stage' is empty")
+		type rankingRequest struct {
+			Stage int32 `json:"stage"`
+		}
+
+		// Contextから認証済みのユーザーを取得
+		ctx := request.Context()
+		user := dcontext.GetUserFromContext(ctx)
+		if user == nil {
+			log.Println("user is empty")
+			response.BadRequest(writer, "user is empty")
 			return
 		}
-		if stage < 1 || stage > constant.NumberOfStage {
-			log.Printf("query 'stage' is invalid. start=%d", stage)
+
+		// リクエストBodyから、ステージを取得
+		var requestBody rankingRequest
+		err := json.NewDecoder(request.Body).Decode(&requestBody)
+		if err != nil {
+			log.Println(err)
+			response.BadRequest(writer, `request parameter is empty`)
+			return
+		}
+		if requestBody.Stage < 1 || requestBody.Stage > constant.NumberOfStage {
+			log.Printf("query 'stage' is invalid. start=%d", requestBody.Stage)
 			response.BadRequest(writer, "query 'stage' is invalid")
 			return
 		}
 
 		// ユーザー情報の取得を行うユースケースを呼び出し
-		rankingUserList, err := rh.rankingUsecase.GetRanking(stage)
+		rankingUserList, err := rh.rankingUsecase.GetRanking(requestBody.Stage)
 		if err != nil {
 			log.Println(err)
 			response.InternalServerError(writer, "Internal Server Error")

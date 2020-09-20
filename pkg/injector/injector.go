@@ -36,7 +36,7 @@ func InjectUserHandler() handler.UserHandler {
 
 // -----Gameの依存解決-----
 func InjectGameUsecase() usecase.GameUsecase {
-	return usecase.NewGameUsecase(InjectUserRepo())
+	return usecase.NewGameUsecase(InjectUserRepo(), InjectUserScoreRepo())
 }
 
 func InjectGameHandler() handler.GameHandler {

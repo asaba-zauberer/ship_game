@@ -50,12 +50,12 @@ func (gh *gameHandler) HandleFinish() http.HandlerFunc {
 		err := json.NewDecoder(request.Body).Decode(&requestBody)
 		if err != nil {
 			log.Println(err)
-			response.BadRequest(writer, `request "score" empty`)
+			response.BadRequest(writer, `request parameter is empty`)
 			return
 		}
 
 		// ゲーム終了時にユーザー情報を更新するユースケースを呼び出し
-		getCoin, err := gh.gameUsecase.GameFinish(user, requestBody.Score, requestBody.Stage)
+		getCoin, err := gh.gameUsecase.GameFinish(user, requestBody.Stage, requestBody.Score)
 		if err != nil {
 			log.Println(err)
 			response.InternalServerError(writer, "Internal Server Error")

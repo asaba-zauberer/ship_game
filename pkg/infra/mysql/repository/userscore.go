@@ -29,7 +29,7 @@ func NewUserScoreRepo(sqlHandler mysql.SqlHandler) repository.UserScoreRepo {
 
 // GetScoreByUserIDAndStage userID, stageを条件に1レコードを取得
 func (usr *userScoreRepo) GetScoreByIDAndStage(userID string, stage int32) (*model.UserScore, error) {
-	row := usr.SqlHandler.Conn.QueryRow("SELECT * FROM user_score WHERE id = ?, stage = ?", userID, stage)
+	row := usr.SqlHandler.Conn.QueryRow("SELECT * FROM user_score WHERE id = ? AND stage = ?", userID, stage)
 	return convertToUserScore(row)
 }
 
@@ -44,7 +44,7 @@ func (usr *userScoreRepo) GetScoresByID(userID string) (model.UserScores, error)
 
 // InsertScore スコアを登録
 func (usr *userScoreRepo) InsertScore(userID string, stage, score int32) error {
-	stmt, err := usr.SqlHandler.Conn.Prepare("INSERT INTO user (id, stage, score) VALUES (?, ?, ?)")
+	stmt, err := usr.SqlHandler.Conn.Prepare("INSERT INTO user_score (id, stage, score) VALUES (?, ?, ?)")
 	if err != nil {
 		return err
 	}
@@ -54,11 +54,11 @@ func (usr *userScoreRepo) InsertScore(userID string, stage, score int32) error {
 
 // Update ユーザー情報の更新
 func (usr *userScoreRepo) UpdateScore(userID string, stage, score int32) error {
-	stmt, err := usr.SqlHandler.Conn.Prepare("UPDATE user SET score = ? WHERE id = ?, stage = ?")
+	stmt, err := usr.SqlHandler.Conn.Prepare("UPDATE user_score SET score = ? WHERE id = ? AND stage = ?")
 	if err != nil {
 		return err
 	}
-	_, err = stmt.Exec(userID, stage, score)
+	_, err = stmt.Exec(score, userID, stage)
 	return err
 }
 

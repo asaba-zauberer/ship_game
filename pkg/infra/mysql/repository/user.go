@@ -75,11 +75,11 @@ func createSelectByIDListQuery(ids []string) (string, []interface{}) {
 
 // Update ユーザー情報の更新
 func (ur *userRepo) Update(record *model.User, name string, coin, stage int32) error {
-	stmt, err := ur.SqlHandler.Conn.Prepare("UPDATE user SET name = ?, coin = ? WHERE id = ?")
+	stmt, err := ur.SqlHandler.Conn.Prepare("UPDATE user SET name = ?, coin = ?, stage = ? WHERE id = ?")
 	if err != nil {
 		return err
 	}
-	_, err = stmt.Exec(name, coin, record.ID)
+	_, err = stmt.Exec(name, coin, stage, record.ID)
 	return err
 }
 

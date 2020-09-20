@@ -23,3 +23,6 @@ dojo-api
 # GoLand
 .idea/*
 .env
+
+# vscode
+.vscode

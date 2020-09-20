@@ -2,7 +2,6 @@ package server
 
 import (
 	"20dojo-online/pkg/injector"
-	"20dojo-online/pkg/interfaces/handler"
 	"log"
 	"math/rand"
 	"net/http"
@@ -23,8 +22,6 @@ func Serve(addr string) {
 	gachaHandler := injector.InjectGachaHandler()
 
 	// ルーティング
-	http.HandleFunc("/setting/get", get(handler.HandleGet()))
-
 	http.HandleFunc("/user/create", post(userHandler.HandleCreate()))
 	http.HandleFunc("/user/get", get(middleware.Authenticate(userHandler.HandleGet())))
 

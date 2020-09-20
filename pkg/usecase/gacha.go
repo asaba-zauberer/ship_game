@@ -10,6 +10,7 @@ import (
 	"fmt"
 	"log"
 	"math/rand"
+	"strconv"
 )
 
 type GachaUsecase interface {
@@ -91,11 +92,14 @@ func (gu gachaUsecase) DrawGacha(user *model.User, times int32) ([]*gachaResultL
 		userGotItems := make(model.UserCollectionItems, times)
 		for i, gotItemData := range gotItemsData {
 			_, ok := userCollectionItemsMap[gotItemData.ID]
+			rarity, _ := strconv.Atoi(gotItemData.ID)
+			rarity = rarity / 1000
 
 			gachaResults[i] = &gachaResultList{
-				ID:    gotItemData.ID,
-				Name:  gotItemData.Name,
-				IsNew: !ok,
+				ID:     gotItemData.ID,
+				Name:   gotItemData.Name,
+				Rarity: int32(rarity),
+				IsNew:  !ok,
 			}
 			userGotItems[i] = &model.UserCollectionItem{
 				UserID:           user.ID,

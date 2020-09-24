@@ -1,15 +1,11 @@
 ## 概要
 <p>
-プロトスプリントリーグでB班が制作した船のゲームサーバサイド<br>
-API仕様書は SwaggerEditor に定義ファイルの内容を入力して参照してください。
+ハッカソンで制作したゲームのサーバサイド<br>
+仕様はAPI仕様書としているので SwaggerEditor にfune_api.ymlの内容を入力して参照してください。
 </p>
 
 SwaggerEditor: <https://editor.swagger.io> <br>
-定義ファイル: `./api-document.yaml`<br>
 
-※ Firefoxはブラウザ仕様により上記サイトからlocalhostへ向けた通信を許可していないので動作しません
-- https://bugzilla.mozilla.org/show_bug.cgi?id=1488740
-- https://bugzilla.mozilla.org/show_bug.cgi?id=903966
 
 ## DB構築
 db/init/の1_ddl.sql, 2_dml.sqlを順に実行
@@ -25,7 +21,7 @@ $ export MYSQL_USER=hoge \
     MYSQL_PASSWORD=hoge \
     MYSQL_HOST=127.0.0.1 \
     MYSQL_PORT=3306 \
-    MYSQL_DATABASE=ca_hack
+    MYSQL_DATABASE=hoge
 ```
 
 Windowsの場合
@@ -34,7 +30,7 @@ $ SET MYSQL_USER=hoge
 $ SET MYSQL_PASSWORD=hoge
 $ SET MYSQL_HOST=127.0.0.1
 $ SET MYSQL_PORT=3306
-$ SET MYSQL_DATABASE=ca_hack
+$ SET MYSQL_DATABASE=hoge
 ```
 
 ## APIローカル起動方法
